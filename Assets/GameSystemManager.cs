@@ -10,6 +10,7 @@ public class GameSystemManager : MonoBehaviour
     GameObject networkedClient;
     GameObject findGameSessionButton, placeHolderGameButton;
     GameObject nameText, passwordText;
+    GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +42,27 @@ public class GameSystemManager : MonoBehaviour
                 passwordText = go;
             else if (go.name == "TextUserName")
                 nameText = go;
+
+            else if (go.name == "Button1")
+                button1 = go;
+            else if (go.name == "Button2")
+                button2 = go;
+            else if (go.name == "Button3")
+                button3 = go;
+            else if (go.name == "Button4")
+                button4 = go;
+            else if (go.name == "Button5")
+                button5 = go;
+            else if (go.name == "Button6")
+                button6 = go;
+            else if (go.name == "Button7")
+                button7 = go;
+            else if (go.name == "Button8")
+                button8 = go;            
+            else if (go.name == "Button9")
+                button9 = go;
+            else if (go.name == "GameBoard")
+                gameBoard = go;
         }
         buttonSubmit.GetComponent<Button>().onClick.AddListener(SubmitButtonPressed);
         toggleCreate.GetComponent<Toggle>().onValueChanged.AddListener(ToggleCreateValueChanged);
@@ -48,6 +70,15 @@ public class GameSystemManager : MonoBehaviour
 
         findGameSessionButton.GetComponent<Button>().onClick.AddListener(FindGameSessionButtonPressed);
         placeHolderGameButton.GetComponent<Button>().onClick.AddListener(PlaceHolderGameButtonnPressed);
+        //button1.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button1));
+        //button2.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button2));
+        //button3.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button3));
+        //button4.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button4));
+        //button5.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button5));
+        //button6.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button6));
+        //button7.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button7));
+        //button8.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button8));
+        //button9.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button9));
 
         ChangeGameState(GameStates.Login);
     }
@@ -55,14 +86,14 @@ public class GameSystemManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.A))
-        //    ChangeGameState(GameStates.Login);
-        //if (Input.GetKeyDown(KeyCode.S))
-        //    ChangeGameState(GameStates.MainMenu);
-        //if (Input.GetKeyDown(KeyCode.D))
-        //    ChangeGameState(GameStates.WaitingForMatch);
-        //if (Input.GetKeyDown(KeyCode.F))
-        //    ChangeGameState(GameStates.PlayingTicTacToe);
+        if (Input.GetKeyDown(KeyCode.A))
+            ChangeGameState(GameStates.Login);
+        if (Input.GetKeyDown(KeyCode.S))
+            ChangeGameState(GameStates.MainMenu);
+        if (Input.GetKeyDown(KeyCode.D))
+            ChangeGameState(GameStates.WaitingForMatch);
+        if (Input.GetKeyDown(KeyCode.F))
+            ChangeGameState(GameStates.PlayingTicTacToe);
     }
 
     private void SubmitButtonPressed()
@@ -96,6 +127,11 @@ public class GameSystemManager : MonoBehaviour
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + ",");
     }
 
+    //private void OXSelectionButtonnPressed(GameObject button)
+    //{
+    //    Debug.Log("gfdsg");
+    //}
+
     public void ChangeGameState(int newState)
     {
         inputFieldUserName.SetActive(false);
@@ -107,6 +143,16 @@ public class GameSystemManager : MonoBehaviour
         placeHolderGameButton.SetActive(false);
         passwordText.SetActive(false);
         nameText.SetActive(false);
+        button1.SetActive(false);
+        button2.SetActive(false);
+        button3.SetActive(false);
+        button4.SetActive(false);
+        button5.SetActive(false);
+        button6.SetActive(false);
+        button7.SetActive(false);
+        button8.SetActive(false);
+        button9.SetActive(false);
+        gameBoard.SetActive(false);
 
         if (newState == GameStates.Login)
         {
@@ -128,6 +174,16 @@ public class GameSystemManager : MonoBehaviour
         }
         else if (newState == GameStates.PlayingTicTacToe)
         {
+            button1.SetActive(true);
+            button2.SetActive(true);
+            button3.SetActive(true);
+            button4.SetActive(true);
+            button5.SetActive(true);
+            button6.SetActive(true);
+            button7.SetActive(true);
+            button8.SetActive(true);
+            button9.SetActive(true);
+            gameBoard.SetActive(true);
             placeHolderGameButton.SetActive(true);
         }
     }
