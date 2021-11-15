@@ -12,9 +12,15 @@ public class GameSystemManager : MonoBehaviour
     GameObject nameText, passwordText;
     GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard;
 
+    public string currentPlayerMarker = "O";
+    string b1, b2, b3, b4, b5, b6, b7, b8, b9 = " ";
+    //LinkedList<MovesMade> movesMade;
+
     // Start is called before the first frame update
     void Start()
     {
+        //movesMade = new LinkedList<MovesMade>();
+
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
 
         foreach (GameObject go in allObjects)
@@ -70,15 +76,16 @@ public class GameSystemManager : MonoBehaviour
 
         findGameSessionButton.GetComponent<Button>().onClick.AddListener(FindGameSessionButtonPressed);
         placeHolderGameButton.GetComponent<Button>().onClick.AddListener(PlaceHolderGameButtonnPressed);
-        //button1.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button1));
-        //button2.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button2));
-        //button3.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button3));
-        //button4.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button4));
-        //button5.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button5));
-        //button6.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button6));
-        //button7.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button7));
-        //button8.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button8));
-        //button9.GetComponent<Button>().onClick.AddListener(OXSelectionButtonnPressed(button9));
+        button1.GetComponent<Button>().onClick.AddListener(Button1Pressed);
+        button2.GetComponent<Button>().onClick.AddListener(Button2Pressed);
+        button3.GetComponent<Button>().onClick.AddListener(Button3Pressed);
+        button4.GetComponent<Button>().onClick.AddListener(Button4Pressed);
+        button5.GetComponent<Button>().onClick.AddListener(Button5Pressed);
+        button6.GetComponent<Button>().onClick.AddListener(Button6Pressed);
+        button7.GetComponent<Button>().onClick.AddListener(Button7Pressed);
+        button8.GetComponent<Button>().onClick.AddListener(Button8Pressed);
+        button9.GetComponent<Button>().onClick.AddListener(Button9Pressed);
+
 
         ChangeGameState(GameStates.Login);
     }
@@ -127,10 +134,84 @@ public class GameSystemManager : MonoBehaviour
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + ",");
     }
 
-    //private void OXSelectionButtonnPressed(GameObject button)
-    //{
-    //    Debug.Log("gfdsg");
-    //}
+    private void Button1Pressed()
+    {
+        PlaceMarker(button1);
+    }
+    private void Button2Pressed()
+    {
+        PlaceMarker(button2);
+    }
+    private void Button3Pressed()
+    {
+        PlaceMarker(button3);
+    }
+    private void Button4Pressed()
+    {
+        PlaceMarker(button4);
+    }
+    private void Button5Pressed()
+    {
+        PlaceMarker(button5);
+    }
+    private void Button6Pressed()
+    {
+        PlaceMarker(button6);
+    }
+    private void Button7Pressed()
+    {
+        PlaceMarker(button7);
+    }
+    private void Button8Pressed()
+    {
+        PlaceMarker(button8);
+    }
+    private void Button9Pressed()
+    {
+        PlaceMarker(button9);
+    }
+
+    private void PlaceMarker(GameObject buttonPressed)
+    {
+        ChangeMarker(currentPlayerMarker);
+        Text cellMarking = buttonPressed.GetComponentInChildren<Text>();
+        Button button = buttonPressed.GetComponent<Button>();
+        cellMarking.text = currentPlayerMarker;
+
+        button.interactable = false;
+        CheckWinCondition(buttonPressed, currentPlayerMarker);
+    }
+    private void ChangeMarker(string marker)
+    {
+       if(marker == "X")
+            currentPlayerMarker = "O";
+       else
+            currentPlayerMarker = "X";
+    }
+    private void CheckWinCondition(GameObject buttonPressed, string marker)
+    {
+
+
+
+        Debug.Log(button1.GetComponentInChildren<Text>());
+
+        if (button1.GetComponentInChildren<Text>() == button2.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button3.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button4.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button4.GetComponentInChildren<Text>() == button6.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button7.GetComponentInChildren<Text>() == button8.GetComponentInChildren<Text>() && button7.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button1.GetComponentInChildren<Text>() == button4.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button7.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button2.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button2.GetComponentInChildren<Text>() == button8.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button3.GetComponentInChildren<Text>() == button6.GetComponentInChildren<Text>() && button3.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button1.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+        if (button3.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button3.GetComponentInChildren<Text>() == button7.GetComponentInChildren<Text>())
+            Debug.Log("GAME OVER DUDE");
+    }
 
     public void ChangeGameState(int newState)
     {
@@ -187,8 +268,27 @@ public class GameSystemManager : MonoBehaviour
             placeHolderGameButton.SetActive(true);
         }
     }
-
+    //private MovesMade PlayBackMoves(int id)
+    //{
+    //    foreach (MovesMade mm in movesMade)
+    //    {
+    //        if (mm.playerID1 == id || mm.playerID2 == id)
+    //            return mm;
+    //    }
+    //    return null;
+    //}
 }
+
+//public class MovesMade
+//{
+//    public int playerID1, playerID2;
+
+//    public MovesMade(int PlayerID1, int PlayerID2)
+//    {
+//        playerID1 = PlayerID1;
+//        playerID1 = PlayerID1;
+//    }
+//}
 
 public static class ClientToServerSignifiers
 {
@@ -220,3 +320,4 @@ public static class GameStates
     public const int WaitingForMatch = 3;
     public const int PlayingTicTacToe = 4;
 }
+

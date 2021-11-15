@@ -7,7 +7,7 @@ public class XOButtonScript : MonoBehaviour
 {
     private Text cellMarking;
     private Button button;
-    public string XorO = "X";
+    public GameObject gameManager;
 
     private void Start()
     {
@@ -18,7 +18,7 @@ public class XOButtonScript : MonoBehaviour
 
     public void PlayInCell()
     {
-        cellMarking.text = XorO;
-        button.interactable = false;
+        //cellMarking.text = gameManager.GetComponent<GameSystemManager>().currentPlayerMarker; ;
+        //button.interactable = false;
     }
 }

@@ -124,7 +124,7 @@ public class NetworkedClient : MonoBehaviour
             if(loginResultSignifier == LoginResponses.Success)
                 gameSystemManager.GetComponent<GameSystemManager>().ChangeGameState(GameStates.MainMenu);
         }
-        else if (signifier == ServerToClientSignifiers.LoginResponse)
+        else if (signifier == ServerToClientSignifiers.GameSessionStarted)
         {
             gameSystemManager.GetComponent<GameSystemManager>().ChangeGameState(GameStates.PlayingTicTacToe);
         }
