@@ -18,6 +18,12 @@ public class GameSystemManager : MonoBehaviour
     LinkedList<MovesMade> movesMade;
     public int turnInOrder;
     private float timer = 0;
+    GameObject[] CellButtons = new GameObject[9];
+    string[] CellMarkers = new string[9];
+    int indexCounter = 0;
+    int indexer = 0;
+    bool playBack = false;
+
 
 
     // Start is called before the first frame update
@@ -99,7 +105,22 @@ public class GameSystemManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(timer >= 0)
         timer -= Time.deltaTime;
+        else
+        {
+            if(playBack == true)
+            {
+                if (indexCounter != 0)
+                {
+                    CellButtons[indexer].GetComponentInChildren<Text>().text = CellMarkers[indexer];
+                    ++indexer;
+                    --indexCounter;
+                    timer = 1;
+                }
+            }
+        }
+        //Debug.Log(timer);
         //if (Input.GetKeyDown(KeyCode.A))
         //{
         //    foreach (MovesMade move in movesMade)
@@ -143,12 +164,17 @@ public class GameSystemManager : MonoBehaviour
     }
     private void ReplayButtonnPressed()
     {
-        foreach (MovesMade move in movesMade)
+        GameObject[] CellButtons = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
+        foreach(GameObject marker in CellButtons)
         {
-            Debug.Log(move.cellMarked + " " + move.markerXO);
-            move.cellMarked.GetComponentInChildren<Text>().text = move.markerXO;
-            Thread.Sleep(1000); // 1000 milliseconds i.e 1sec
+            marker.GetComponentInChildren<Text>().text = "";
         }
+        playBack = true;
+        //foreach (MovesMade move in movesMade)
+        //{
+        //    //move.cellMarked.GetComponentInChildren<Text>().text = move.markerXO;
+        //    Debug.Log(movesMade.Count);
+        //}
     }
     //repetitive, condense
     private void Button1Pressed()
@@ -252,6 +278,9 @@ public class GameSystemManager : MonoBehaviour
         Text cellMarking = buttonPressed.GetComponentInChildren<Text>(); 
         Button button = buttonPressed.GetComponent<Button>();
         cellMarking.text = currentPlayerMarker;
+        CellButtons[indexCounter] = buttonPressed;
+        CellMarkers[indexCounter] = currentPlayerMarker;
+        ++indexCounter;
 
         button.interactable = false;
         movesMade.AddLast(new MovesMade(buttonPressed, currentPlayerMarker));
