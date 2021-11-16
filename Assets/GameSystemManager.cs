@@ -13,6 +13,7 @@ public class GameSystemManager : MonoBehaviour
     GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard;
 
     public string currentPlayerMarker = "O";
+    public int lastPlay;
     string b1, b2, b3, b4, b5, b6, b7, b8, b9 = " ";
     //LinkedList<MovesMade> movesMade;
 
@@ -133,53 +134,104 @@ public class GameSystemManager : MonoBehaviour
     {
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + ",");
     }
-
+    //repetitive, condense
     private void Button1Pressed()
     {
+        lastPlay = 1;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button1);
     }
     private void Button2Pressed()
     {
+        lastPlay = 2;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button2);
     }
     private void Button3Pressed()
     {
+        lastPlay = 3;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button3);
     }
     private void Button4Pressed()
     {
+        lastPlay = 4;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button4);
     }
     private void Button5Pressed()
     {
+        lastPlay = 5;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button5);
     }
     private void Button6Pressed()
     {
+        lastPlay = 6;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button6);
     }
     private void Button7Pressed()
     {
+        lastPlay = 7;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button7);
     }
     private void Button8Pressed()
     {
+        lastPlay = 8;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button8);
     }
     private void Button9Pressed()
     {
+        lastPlay = 9;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button9);
     }
-
+    public void GetOpponentsPlay(int playedCell)
+    {
+        switch (playedCell)
+        {
+            case 1:
+                PlaceMarker(button1);
+                break;
+            case 2:
+                PlaceMarker(button2);
+                break;
+            case 3:
+                PlaceMarker(button3);
+                break;
+            case 4:
+                PlaceMarker(button4);
+                break;
+            case 5:
+                PlaceMarker(button5);
+                break;
+            case 6:
+                PlaceMarker(button6);
+                break;
+            case 7:
+                PlaceMarker(button7);
+                break;
+            case 8:
+                PlaceMarker(button8);
+                break;
+            case 9:
+                PlaceMarker(button9);
+                break;
+        }
+    }
     private void PlaceMarker(GameObject buttonPressed)
     {
+        //networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         ChangeMarker(currentPlayerMarker);
         Text cellMarking = buttonPressed.GetComponentInChildren<Text>();
         Button button = buttonPressed.GetComponent<Button>();
         cellMarking.text = currentPlayerMarker;
 
         button.interactable = false;
-        CheckWinCondition(buttonPressed, currentPlayerMarker);
+       // CheckWinCondition(buttonPressed, currentPlayerMarker);
     }
     private void ChangeMarker(string marker)
     {
@@ -193,7 +245,7 @@ public class GameSystemManager : MonoBehaviour
 
 
 
-        Debug.Log(button1.GetComponentInChildren<Text>());
+        //Debug.Log(button1.GetComponentInChildren<Text>());
 
         if (button1.GetComponentInChildren<Text>() == button2.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button3.GetComponentInChildren<Text>())
             Debug.Log("GAME OVER DUDE");
@@ -265,7 +317,7 @@ public class GameSystemManager : MonoBehaviour
             button8.SetActive(true);
             button9.SetActive(true);
             gameBoard.SetActive(true);
-            placeHolderGameButton.SetActive(true);
+            //placeHolderGameButton.SetActive(true);
         }
     }
     //private MovesMade PlayBackMoves(int id)
@@ -321,3 +373,15 @@ public static class GameStates
     public const int PlayingTicTacToe = 4;
 }
 
+public static class SquarePlayedIn
+{
+    public const int TopLeft = 1;
+    public const int TopCenter = 2;
+    public const int TopRight = 3;
+    public const int MiddleLeft = 4;
+    public const int MiddleCenter = 5;
+    public const int MiddleRight = 6;
+    public const int BottomLeft = 7;
+    public const int BottomCenter = 8;
+    public const int BottomRight = 9;
+}

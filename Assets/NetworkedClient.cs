@@ -130,7 +130,11 @@ public class NetworkedClient : MonoBehaviour
         }
         else if (signifier == ServerToClientSignifiers.OpponentTicTacToePlay)
         {
-            Debug.Log("Next item no more, FIGHT!");
+            int OpponantMoveSignifier = int.Parse(csv[1]);
+            //if (OpponantMoveSignifier == SquarePlayedIn.TopLeft)
+            //    Debug.Log("top Left played");
+                gameSystemManager.GetComponent<GameSystemManager>().GetOpponentsPlay(OpponantMoveSignifier); 
+
         }
     }
 
