@@ -2,19 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading;
 
 public class GameSystemManager : MonoBehaviour
 {
 
     GameObject inputFieldUserName, inputFieldPassword, buttonSubmit, toggleLogin, toggleCreate;
     GameObject networkedClient;
-    GameObject findGameSessionButton, placeHolderGameButton;
+    GameObject findGameSessionButton, replayButton;
     GameObject nameText, passwordText;
-    GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard;
+    GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard, buttonBlocker;
 
     public string currentPlayerMarker = "O";
     public int lastPlay;
     LinkedList<MovesMade> movesMade;
+    public int turnInOrder;
+    private float timer = 0;
 
 
     // Start is called before the first frame update
@@ -40,8 +43,8 @@ public class GameSystemManager : MonoBehaviour
             else if (go.name == "NetworkedClient")
                 networkedClient = go;
 
-            else if (go.name == "PlaceHolderGameButton")
-                placeHolderGameButton = go;
+            else if (go.name == "ReplayButton")
+                replayButton = go;
             else if (go.name == "FindGameSessionButton")
                 findGameSessionButton = go;
 
@@ -70,13 +73,15 @@ public class GameSystemManager : MonoBehaviour
                 button9 = go;
             else if (go.name == "GameBoard")
                 gameBoard = go;
+            else if (go.name == "ButtonBlocker")
+                buttonBlocker = go;
         }
         buttonSubmit.GetComponent<Button>().onClick.AddListener(SubmitButtonPressed);
         toggleCreate.GetComponent<Toggle>().onValueChanged.AddListener(ToggleCreateValueChanged);
         toggleLogin.GetComponent<Toggle>().onValueChanged.AddListener(ToggleLoginValueChanged);
 
         findGameSessionButton.GetComponent<Button>().onClick.AddListener(FindGameSessionButtonPressed);
-        placeHolderGameButton.GetComponent<Button>().onClick.AddListener(PlaceHolderGameButtonnPressed);
+        replayButton.GetComponent<Button>().onClick.AddListener(ReplayButtonnPressed);
         button1.GetComponent<Button>().onClick.AddListener(Button1Pressed);
         button2.GetComponent<Button>().onClick.AddListener(Button2Pressed);
         button3.GetComponent<Button>().onClick.AddListener(Button3Pressed);
@@ -94,19 +99,20 @@ public class GameSystemManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            foreach (MovesMade move in movesMade)
-            {
-                Debug.Log(move.cellMarked + " " + move.markerXO);
-            }
-        }
-        //if (Input.GetKeyDown(KeyCode.S))
-        //    ReplayButtonPressed();
-        ////if (Input.GetKeyDown(KeyCode.D))
-        ////    ChangeGameState(GameStates.WaitingForMatch);
-        ////if (Input.GetKeyDown(KeyCode.F))
-        ////    ChangeGameState(GameStates.PlayingTicTacToe);
+        timer -= Time.deltaTime;
+        //if (Input.GetKeyDown(KeyCode.A))
+        //{
+        //    foreach (MovesMade move in movesMade)
+        //    {
+        //        Debug.Log(move.cellMarked + " " + move.markerXO);
+        //    }
+        //}
+        ////if (Input.GetKeyDown(KeyCode.S))
+        ////    ReplayButtonPressed();
+        //////if (Input.GetKeyDown(KeyCode.D))
+        //////    ChangeGameState(GameStates.WaitingForMatch);
+        //////if (Input.GetKeyDown(KeyCode.F))
+        //////    ChangeGameState(GameStates.PlayingTicTacToe);
     }
 
     private void SubmitButtonPressed()
@@ -135,9 +141,14 @@ public class GameSystemManager : MonoBehaviour
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.AddToGameSessionQueue + ",");
         ChangeGameState(GameStates.WaitingForMatch);
     }
-    private void PlaceHolderGameButtonnPressed()
+    private void ReplayButtonnPressed()
     {
-        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + ",");
+        foreach (MovesMade move in movesMade)
+        {
+            Debug.Log(move.cellMarked + " " + move.markerXO);
+            move.cellMarked.GetComponentInChildren<Text>().text = move.markerXO;
+            Thread.Sleep(1000); // 1000 milliseconds i.e 1sec
+        }
     }
     //repetitive, condense
     private void Button1Pressed()
@@ -237,6 +248,7 @@ public class GameSystemManager : MonoBehaviour
         else
             currentPlayerMarker = "X";
 
+
         Text cellMarking = buttonPressed.GetComponentInChildren<Text>(); 
         Button button = buttonPressed.GetComponent<Button>();
         cellMarking.text = currentPlayerMarker;
@@ -249,21 +261,33 @@ public class GameSystemManager : MonoBehaviour
     private void CheckWinCondition()
     {
         if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button2.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button3.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button4.GetComponentInChildren<Text>().text != "" && button4.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button4.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button7.GetComponentInChildren<Text>().text != "" && button7.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text && button7.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button4.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button2.GetComponentInChildren<Text>().text != "" && button2.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button2.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
-        if (button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
-            Debug.Log("GAME OVER DUDE");
+            GameOver(true);
+        else if(button4.GetComponentInChildren<Text>().text != "" && button4.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button4.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button7.GetComponentInChildren<Text>().text != "" && button7.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text && button7.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button4.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button2.GetComponentInChildren<Text>().text != "" && button2.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button2.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else if(button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
+            GameOver(true);
+        else
+            GameOver(false);
+    }
+    private void GameOver(bool gg)
+    {
+        if(gg == true)
+        {
+            buttonBlocker.SetActive(true);
+            replayButton.SetActive(true);
+        }
+        else
+            SwitchTurns();
     }
 
     public void ChangeGameState(int newState)
@@ -274,7 +298,7 @@ public class GameSystemManager : MonoBehaviour
         toggleLogin.SetActive(false);
         toggleCreate.SetActive(false);
         findGameSessionButton.SetActive(false);
-        placeHolderGameButton.SetActive(false);
+        replayButton.SetActive(false);
         passwordText.SetActive(false);
         nameText.SetActive(false);
         button1.SetActive(false);
@@ -287,6 +311,7 @@ public class GameSystemManager : MonoBehaviour
         button8.SetActive(false);
         button9.SetActive(false);
         gameBoard.SetActive(false);
+        buttonBlocker.SetActive(false);
 
         if (newState == GameStates.Login)
         {
@@ -318,7 +343,22 @@ public class GameSystemManager : MonoBehaviour
             button8.SetActive(true);
             button9.SetActive(true);
             gameBoard.SetActive(true);
-            //placeHolderGameButton.SetActive(true);
+
+            SwitchTurns();
+        }
+    }
+
+    private void SwitchTurns()
+    {
+        if (turnInOrder != 1)
+        {
+            buttonBlocker.SetActive(true);
+            turnInOrder = 1;
+        }
+        else
+        {
+            buttonBlocker.SetActive(false);
+            turnInOrder = 2;
         }
     }
     //private MovesMade PlayBackMoves(int id)

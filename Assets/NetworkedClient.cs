@@ -126,15 +126,14 @@ public class NetworkedClient : MonoBehaviour
         }
         else if (signifier == ServerToClientSignifiers.GameSessionStarted)
         {
+            int PlayerTurnSignifier = int.Parse(csv[1]);
+            gameSystemManager.GetComponent<GameSystemManager>().turnInOrder = PlayerTurnSignifier;
             gameSystemManager.GetComponent<GameSystemManager>().ChangeGameState(GameStates.PlayingTicTacToe);
         }
         else if (signifier == ServerToClientSignifiers.OpponentTicTacToePlay)
         {
             int OpponantMoveSignifier = int.Parse(csv[1]);
-            //if (OpponantMoveSignifier == SquarePlayedIn.TopLeft)
-            //    Debug.Log("top Left played");
                 gameSystemManager.GetComponent<GameSystemManager>().GetOpponentsPlay(OpponantMoveSignifier); 
-
         }
     }
 
