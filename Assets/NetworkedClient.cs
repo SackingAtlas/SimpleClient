@@ -135,6 +135,11 @@ public class NetworkedClient : MonoBehaviour
             int OpponantMoveSignifier = int.Parse(csv[1]);
                 gameSystemManager.GetComponent<GameSystemManager>().GetOpponentsPlay(OpponantMoveSignifier); 
         }
+        else if (signifier == ServerToClientSignifiers.ObserverEntered)
+        {
+            //int OpponantMoveSignifier = int.Parse(csv[1]);
+            //gameSystemManager.GetComponent<GameSystemManager>().GetOpponentsPlay(OpponantMoveSignifier);
+        }
     }
 
     public bool IsConnected()

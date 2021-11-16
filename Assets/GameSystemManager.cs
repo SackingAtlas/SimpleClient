@@ -9,13 +9,12 @@ public class GameSystemManager : MonoBehaviour
 
     GameObject inputFieldUserName, inputFieldPassword, buttonSubmit, toggleLogin, toggleCreate;
     GameObject networkedClient;
-    GameObject findGameSessionButton, replayButton;
+    GameObject findGameSessionButton, replayButton, watchGameButton;
     GameObject nameText, passwordText;
     GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard, buttonBlocker;
 
     public string currentPlayerMarker = "O";
     public int lastPlay;
-    LinkedList<MovesMade> movesMade;
     public int turnInOrder;
     private float timer = 0;
     GameObject[] CellButtons = new GameObject[9];
@@ -26,11 +25,8 @@ public class GameSystemManager : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
     void Start()
     {
-        movesMade = new LinkedList<MovesMade>();
-
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
 
         foreach (GameObject go in allObjects)
@@ -52,7 +48,9 @@ public class GameSystemManager : MonoBehaviour
             else if (go.name == "ReplayButton")
                 replayButton = go;
             else if (go.name == "FindGameSessionButton")
-                findGameSessionButton = go;
+                findGameSessionButton = go;           
+            else if (go.name == "WatchGameButton")
+                watchGameButton = go;
 
             else if (go.name == "TextPassword")
                 passwordText = go;
@@ -88,6 +86,7 @@ public class GameSystemManager : MonoBehaviour
 
         findGameSessionButton.GetComponent<Button>().onClick.AddListener(FindGameSessionButtonPressed);
         replayButton.GetComponent<Button>().onClick.AddListener(ReplayButtonnPressed);
+        watchGameButton.GetComponent<Button>().onClick.AddListener(watchGameButtonPressed);
         button1.GetComponent<Button>().onClick.AddListener(Button1Pressed);
         button2.GetComponent<Button>().onClick.AddListener(Button2Pressed);
         button3.GetComponent<Button>().onClick.AddListener(Button3Pressed);
@@ -102,7 +101,6 @@ public class GameSystemManager : MonoBehaviour
         ChangeGameState(GameStates.Login);
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(timer >= 0)
@@ -120,20 +118,6 @@ public class GameSystemManager : MonoBehaviour
                 }
             }
         }
-        //Debug.Log(timer);
-        //if (Input.GetKeyDown(KeyCode.A))
-        //{
-        //    foreach (MovesMade move in movesMade)
-        //    {
-        //        Debug.Log(move.cellMarked + " " + move.markerXO);
-        //    }
-        //}
-        ////if (Input.GetKeyDown(KeyCode.S))
-        ////    ReplayButtonPressed();
-        //////if (Input.GetKeyDown(KeyCode.D))
-        //////    ChangeGameState(GameStates.WaitingForMatch);
-        //////if (Input.GetKeyDown(KeyCode.F))
-        //////    ChangeGameState(GameStates.PlayingTicTacToe);
     }
 
     private void SubmitButtonPressed()
@@ -162,6 +146,12 @@ public class GameSystemManager : MonoBehaviour
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.AddToGameSessionQueue + ",");
         ChangeGameState(GameStates.WaitingForMatch);
     }
+
+    private void watchGameButtonPressed()
+    {
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.AddOberverToSession + ",");
+        ChangeGameState(GameStates.WatchingTicTacToe);
+    }
     private void ReplayButtonnPressed()
     {
         GameObject[] CellButtons = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
@@ -169,12 +159,8 @@ public class GameSystemManager : MonoBehaviour
         {
             marker.GetComponentInChildren<Text>().text = "";
         }
+        //int countHolder = indexCounter;
         playBack = true;
-        //foreach (MovesMade move in movesMade)
-        //{
-        //    //move.cellMarked.GetComponentInChildren<Text>().text = move.markerXO;
-        //    Debug.Log(movesMade.Count);
-        //}
     }
     //repetitive, condense
     private void Button1Pressed()
@@ -281,9 +267,7 @@ public class GameSystemManager : MonoBehaviour
         CellButtons[indexCounter] = buttonPressed;
         CellMarkers[indexCounter] = currentPlayerMarker;
         ++indexCounter;
-
         button.interactable = false;
-        movesMade.AddLast(new MovesMade(buttonPressed, currentPlayerMarker));
         CheckWinCondition();
     }
 
@@ -341,6 +325,7 @@ public class GameSystemManager : MonoBehaviour
         button9.SetActive(false);
         gameBoard.SetActive(false);
         buttonBlocker.SetActive(false);
+        watchGameButton.SetActive(false);
 
         if (newState == GameStates.Login)
         {
@@ -355,6 +340,7 @@ public class GameSystemManager : MonoBehaviour
         else if (newState == GameStates.MainMenu)
         {
             findGameSessionButton.SetActive(true);
+            watchGameButton.SetActive(true);
         }
         else if (newState == GameStates.WaitingForMatch)
         {
@@ -375,43 +361,37 @@ public class GameSystemManager : MonoBehaviour
 
             SwitchTurns();
         }
+        else if (newState == GameStates.WatchingTicTacToe)
+        {
+            button1.SetActive(true);
+            button2.SetActive(true);
+            button3.SetActive(true);
+            button4.SetActive(true);
+            button5.SetActive(true);
+            button6.SetActive(true);
+            button7.SetActive(true);
+            button8.SetActive(true);
+            button9.SetActive(true);
+            gameBoard.SetActive(true);
+            buttonBlocker.SetActive(true);
+        }
     }
 
     private void SwitchTurns()
     {
-        if (turnInOrder != 1)
+        if (turnInOrder == 2)
         {
             buttonBlocker.SetActive(true);
             turnInOrder = 1;
         }
-        else
+        else if (turnInOrder == 1)
         {
             buttonBlocker.SetActive(false);
             turnInOrder = 2;
         }
     }
-    //private MovesMade PlayBackMoves(int id)
-    //{
-    //    foreach (MovesMade mm in movesMade)
-    //    {
-    //        if (mm.playerID1 == id || mm.playerID2 == id)
-    //            return mm;
-    //    }
-    //    return null;
-    //}
 }
 
-public class MovesMade
-{
-    public GameObject cellMarked;
-    public string markerXO;
-
-    public MovesMade(GameObject CellMarked, string MarkerXO)
-    {
-        cellMarked = CellMarked;
-        markerXO = MarkerXO;
-    }
-}
 
 public static class ClientToServerSignifiers
 {
@@ -419,6 +399,7 @@ public static class ClientToServerSignifiers
     public const int CreatAccount = 2;
     public const int AddToGameSessionQueue = 3;
     public const int TicTacToePlay = 4;
+    public const int AddOberverToSession = 5;
 }
 
 public static class ServerToClientSignifiers
@@ -426,6 +407,7 @@ public static class ServerToClientSignifiers
     public const int LoginResponse = 1;
     public const int GameSessionStarted = 2;
     public const int OpponentTicTacToePlay = 3;
+    public const int ObserverEntered = 4;
 }
 
 public static class LoginResponses
@@ -442,6 +424,7 @@ public static class GameStates
     public const int MainMenu = 2;
     public const int WaitingForMatch = 3;
     public const int PlayingTicTacToe = 4;
+    public const int WatchingTicTacToe = 5;
 }
 
 public static class SquarePlayedIn
