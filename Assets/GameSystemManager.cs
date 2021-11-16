@@ -14,13 +14,13 @@ public class GameSystemManager : MonoBehaviour
 
     public string currentPlayerMarker = "O";
     public int lastPlay;
-    string b1, b2, b3, b4, b5, b6, b7, b8, b9 = " ";
-    //LinkedList<MovesMade> movesMade;
+    LinkedList<MovesMade> movesMade;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        //movesMade = new LinkedList<MovesMade>();
+        movesMade = new LinkedList<MovesMade>();
 
         GameObject[] allObjects = UnityEngine.Object.FindObjectsOfType<GameObject>();
 
@@ -95,13 +95,18 @@ public class GameSystemManager : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
-            ChangeGameState(GameStates.Login);
-        if (Input.GetKeyDown(KeyCode.S))
-            ChangeGameState(GameStates.MainMenu);
-        if (Input.GetKeyDown(KeyCode.D))
-            ChangeGameState(GameStates.WaitingForMatch);
-        if (Input.GetKeyDown(KeyCode.F))
-            ChangeGameState(GameStates.PlayingTicTacToe);
+        {
+            foreach (MovesMade move in movesMade)
+            {
+                Debug.Log(move.cellMarked + " " + move.markerXO);
+            }
+        }
+        //if (Input.GetKeyDown(KeyCode.S))
+        //    ReplayButtonPressed();
+        ////if (Input.GetKeyDown(KeyCode.D))
+        ////    ChangeGameState(GameStates.WaitingForMatch);
+        ////if (Input.GetKeyDown(KeyCode.F))
+        ////    ChangeGameState(GameStates.PlayingTicTacToe);
     }
 
     private void SubmitButtonPressed()
@@ -189,8 +194,11 @@ public class GameSystemManager : MonoBehaviour
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
         PlaceMarker(button9);
     }
+
+
     public void GetOpponentsPlay(int playedCell)
     {
+        lastPlay = playedCell;
         switch (playedCell)
         {
             case 1:
@@ -224,44 +232,37 @@ public class GameSystemManager : MonoBehaviour
     }
     private void PlaceMarker(GameObject buttonPressed)
     {
-        //networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.TicTacToePlay + "," + lastPlay);
-        ChangeMarker(currentPlayerMarker);
-        Text cellMarking = buttonPressed.GetComponentInChildren<Text>();
+        if (currentPlayerMarker == "X")
+            currentPlayerMarker = "O";
+        else
+            currentPlayerMarker = "X";
+
+        Text cellMarking = buttonPressed.GetComponentInChildren<Text>(); 
         Button button = buttonPressed.GetComponent<Button>();
         cellMarking.text = currentPlayerMarker;
 
         button.interactable = false;
-       // CheckWinCondition(buttonPressed, currentPlayerMarker);
+        movesMade.AddLast(new MovesMade(buttonPressed, currentPlayerMarker));
+        CheckWinCondition();
     }
-    private void ChangeMarker(string marker)
+
+    private void CheckWinCondition()
     {
-       if(marker == "X")
-            currentPlayerMarker = "O";
-       else
-            currentPlayerMarker = "X";
-    }
-    private void CheckWinCondition(GameObject buttonPressed, string marker)
-    {
-
-
-
-        //Debug.Log(button1.GetComponentInChildren<Text>());
-
-        if (button1.GetComponentInChildren<Text>() == button2.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button3.GetComponentInChildren<Text>())
+        if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button2.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button3.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button4.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button4.GetComponentInChildren<Text>() == button6.GetComponentInChildren<Text>())
+        if (button4.GetComponentInChildren<Text>().text != "" && button4.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button4.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button7.GetComponentInChildren<Text>() == button8.GetComponentInChildren<Text>() && button7.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+        if (button7.GetComponentInChildren<Text>().text != "" && button7.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text && button7.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button1.GetComponentInChildren<Text>() == button4.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button7.GetComponentInChildren<Text>())
+        if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button4.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button2.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button2.GetComponentInChildren<Text>() == button8.GetComponentInChildren<Text>())
+        if (button2.GetComponentInChildren<Text>().text != "" && button2.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button2.GetComponentInChildren<Text>().text == button8.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button3.GetComponentInChildren<Text>() == button6.GetComponentInChildren<Text>() && button3.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+        if (button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button6.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button1.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button1.GetComponentInChildren<Text>() == button9.GetComponentInChildren<Text>())
+        if (button1.GetComponentInChildren<Text>().text != "" && button1.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button1.GetComponentInChildren<Text>().text == button9.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
-        if (button3.GetComponentInChildren<Text>() == button5.GetComponentInChildren<Text>() && button3.GetComponentInChildren<Text>() == button7.GetComponentInChildren<Text>())
+        if (button3.GetComponentInChildren<Text>().text != "" && button3.GetComponentInChildren<Text>().text == button5.GetComponentInChildren<Text>().text && button3.GetComponentInChildren<Text>().text == button7.GetComponentInChildren<Text>().text)
             Debug.Log("GAME OVER DUDE");
     }
 
@@ -331,16 +332,17 @@ public class GameSystemManager : MonoBehaviour
     //}
 }
 
-//public class MovesMade
-//{
-//    public int playerID1, playerID2;
+public class MovesMade
+{
+    public GameObject cellMarked;
+    public string markerXO;
 
-//    public MovesMade(int PlayerID1, int PlayerID2)
-//    {
-//        playerID1 = PlayerID1;
-//        playerID1 = PlayerID1;
-//    }
-//}
+    public MovesMade(GameObject CellMarked, string MarkerXO)
+    {
+        cellMarked = CellMarked;
+        markerXO = MarkerXO;
+    }
+}
 
 public static class ClientToServerSignifiers
 {
