@@ -138,7 +138,7 @@ public class NetworkedClient : MonoBehaviour
         else if (signifier == ServerToClientSignifiers.ObserverEntered)
         {
             int playCount = int.Parse(csv[1]);
-            Debug.Log(playCount);
+            //Debug.Log(playCount);
            // gameSystemManager.GetComponent<GameSystemManager>().ObserverCatchUp(playCount);
         }
         else if (signifier == ServerToClientSignifiers.ObserverCatchUp)
@@ -150,6 +150,11 @@ public class NetworkedClient : MonoBehaviour
         {
             int cellPlayed = int.Parse(csv[1]);
             gameSystemManager.GetComponent<GameSystemManager>().ReplayGameMoves(cellPlayed);
+        }
+        else if (signifier == ServerToClientSignifiers.PassedCommunication)
+        {
+            int MessagePassed = int.Parse(csv[1]);
+            gameSystemManager.GetComponent<GameSystemManager>().DisplayMessage(MessagePassed);
         }
     }
 

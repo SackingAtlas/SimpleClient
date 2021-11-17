@@ -11,6 +11,7 @@ public class GameSystemManager : MonoBehaviour
     GameObject networkedClient;
     GameObject findGameSessionButton, replayButton, watchGameButton;
     GameObject nameText, passwordText;
+    GameObject inputFieldCommunication, messageDisplayText, wellPlayedButton, goodGameButton, insultButton, messageDisplay;
     GameObject button1, button2, button3, button4, button5, button6, button7, button8, button9, gameBoard, buttonBlocker;
 
     public string currentPlayerMarker = "O";
@@ -80,6 +81,19 @@ public class GameSystemManager : MonoBehaviour
                 gameBoard = go;
             else if (go.name == "ButtonBlocker")
                 buttonBlocker = go;
+
+            else if (go.name == "InputFieldCommunication")
+                inputFieldCommunication = go;
+            else if (go.name == "MessageDisplayText")
+                messageDisplayText = go;
+            else if (go.name == "WellPlayedButton")
+                wellPlayedButton = go;
+            else if (go.name == "GoodGameButton")
+                goodGameButton = go;
+            else if (go.name == "InsultButton")
+                insultButton = go;          
+            else if (go.name == "MessageDisplay")
+                messageDisplay = go;
         }
         buttonSubmit.GetComponent<Button>().onClick.AddListener(SubmitButtonPressed);
         toggleCreate.GetComponent<Toggle>().onValueChanged.AddListener(ToggleCreateValueChanged);
@@ -88,6 +102,7 @@ public class GameSystemManager : MonoBehaviour
         findGameSessionButton.GetComponent<Button>().onClick.AddListener(FindGameSessionButtonPressed);
         replayButton.GetComponent<Button>().onClick.AddListener(ReplayButtonnPressed);
         watchGameButton.GetComponent<Button>().onClick.AddListener(watchGameButtonPressed);
+
         button1.GetComponent<Button>().onClick.AddListener(Button1Pressed);
         button2.GetComponent<Button>().onClick.AddListener(Button2Pressed);
         button3.GetComponent<Button>().onClick.AddListener(Button3Pressed);
@@ -97,6 +112,10 @@ public class GameSystemManager : MonoBehaviour
         button7.GetComponent<Button>().onClick.AddListener(Button7Pressed);
         button8.GetComponent<Button>().onClick.AddListener(Button8Pressed);
         button9.GetComponent<Button>().onClick.AddListener(Button9Pressed);
+
+        wellPlayedButton.GetComponent<Button>().onClick.AddListener(WellPlayedButttonPressed);
+        goodGameButton.GetComponent<Button>().onClick.AddListener(GoodGameButttonPressed);
+        insultButton.GetComponent<Button>().onClick.AddListener(InsultButttonPressed);
 
 
         ChangeGameState(GameStates.Login);
@@ -124,9 +143,24 @@ public class GameSystemManager : MonoBehaviour
                     playBack = false;
                 }
             }
+            messageDisplayText.GetComponentInChildren<Text>().text = " ";
         }
     }
-
+    private void InsultButttonPressed()
+    {
+        int insult = 1;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.CommunicationPassing + "," + insult);
+    }
+    private void GoodGameButttonPressed()
+    {
+        int gg = 2;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.CommunicationPassing + "," + gg);
+    }
+    private void WellPlayedButttonPressed()
+    {
+        int wp = 3;
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.CommunicationPassing + "," + wp);
+    }
     private void SubmitButtonPressed()
     {
         string n = inputFieldUserName.GetComponent<InputField>().text;
@@ -180,6 +214,26 @@ public class GameSystemManager : MonoBehaviour
         ++indexCounter;
         timer = 1;
         playBack = true;
+    }
+
+    public void DisplayMessage(int MessagePassed)
+    {
+        switch (MessagePassed)
+        {
+            case 1:
+                Debug.Log("afdsssssssssssssssssssssffDSAFDSAFDSAFDSAFDSAF");
+                messageDisplayText.GetComponentInChildren<Text>().text = "Your mother was a hamster and your father smelt of elderberries";
+                break;
+            case 2:
+                //good game
+                messageDisplayText.GetComponentInChildren<Text>().text = "Good Game!";
+                break;
+            case 3:
+                // well played
+                messageDisplayText.GetComponentInChildren<Text>().text = "Well Played";
+                break;
+        }
+        timer = 5;
     }
     //repetitive, condense
     private void Button1Pressed()
@@ -315,6 +369,7 @@ public class GameSystemManager : MonoBehaviour
         if(gg == true)
         {
             buttonBlocker.SetActive(true);
+            if(turnInOrder == 1 || turnInOrder == 2)
             replayButton.SetActive(true);
         }
         else
@@ -344,6 +399,13 @@ public class GameSystemManager : MonoBehaviour
         gameBoard.SetActive(false);
         buttonBlocker.SetActive(false);
         watchGameButton.SetActive(false);
+
+        inputFieldCommunication.SetActive(false);
+        messageDisplayText.SetActive(false);
+        wellPlayedButton.SetActive(false);
+        goodGameButton.SetActive(false);
+        insultButton.SetActive(false);
+        messageDisplay.SetActive(false);
 
         if (newState == GameStates.Login)
         {
@@ -376,6 +438,12 @@ public class GameSystemManager : MonoBehaviour
             button8.SetActive(true);
             button9.SetActive(true);
             gameBoard.SetActive(true);
+            inputFieldCommunication.SetActive(true);
+            messageDisplayText.SetActive(true);
+            wellPlayedButton.SetActive(true);
+            goodGameButton.SetActive(true);
+            insultButton.SetActive(true);
+            messageDisplay.SetActive(true);
 
             SwitchTurns();
         }
@@ -419,6 +487,7 @@ public static class ClientToServerSignifiers
     public const int TicTacToePlay = 4;
     public const int AddOberverToSession = 5;
     public const int ReplayRequest = 6;
+    public const int CommunicationPassing = 7;
 }
 
 public static class ServerToClientSignifiers
@@ -429,6 +498,7 @@ public static class ServerToClientSignifiers
     public const int ObserverEntered = 4;
     public const int ObserverCatchUp = 5;
     public const int Replay = 6;
+    public const int PassedCommunication = 7;
 }
 
 public static class LoginResponses
