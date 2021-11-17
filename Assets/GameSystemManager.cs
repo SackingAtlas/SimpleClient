@@ -17,6 +17,7 @@ public class GameSystemManager : MonoBehaviour
     public int lastPlay;
     public int turnInOrder;
     private float timer = 0;
+    int[] CellButtonsPosition = new int[9];
     GameObject[] CellButtons = new GameObject[9];
     string[] CellMarkers = new string[9];
     int indexCounter = 0;
@@ -111,10 +112,15 @@ public class GameSystemManager : MonoBehaviour
             {
                 if (indexCounter != 0)
                 {
-                    CellButtons[indexer].GetComponentInChildren<Text>().text = CellMarkers[indexer];
-                    ++indexer;
+                    //PlaceMarker(CellButtons[CellButtonsPosition[indexer]]);
+                    GetOpponentsPlay(CellButtonsPosition[indexer]);
+                   ++indexer;
                     --indexCounter;
                     timer = 1;
+                }
+                else
+                {
+                    playBack = false;
                 }
             }
         }
@@ -154,12 +160,22 @@ public class GameSystemManager : MonoBehaviour
     }
     private void ReplayButtonnPressed()
     {
+        networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.ReplayRequest + ",");
         GameObject[] CellButtons = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
-        foreach(GameObject marker in CellButtons)
+        foreach (GameObject marker in CellButtons)
         {
             marker.GetComponentInChildren<Text>().text = "";
         }
-        //int countHolder = indexCounter;
+    }
+    public void ObserverCatchUp(int Cell)
+    {
+        GameObject[] CellButtons = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
+        PlaceMarker(CellButtons[Cell - 1]);
+    }
+    public void ReplayGameMoves(int Cell) // the number of location
+    {
+        CellButtonsPosition[indexCounter] = Cell;
+        ++indexCounter;
         playBack = true;
     }
     //repetitive, condense
@@ -218,7 +234,6 @@ public class GameSystemManager : MonoBehaviour
         PlaceMarker(button9);
     }
 
-
     public void GetOpponentsPlay(int playedCell)
     {
         lastPlay = playedCell;
@@ -264,9 +279,9 @@ public class GameSystemManager : MonoBehaviour
         Text cellMarking = buttonPressed.GetComponentInChildren<Text>(); 
         Button button = buttonPressed.GetComponent<Button>();
         cellMarking.text = currentPlayerMarker;
-        CellButtons[indexCounter] = buttonPressed;
-        CellMarkers[indexCounter] = currentPlayerMarker;
-        ++indexCounter;
+        //CellButtons[indexCounter] = buttonPressed;
+        //CellMarkers[indexCounter] = currentPlayerMarker;
+        //++indexCounter;
         button.interactable = false;
         CheckWinCondition();
     }
@@ -400,6 +415,7 @@ public static class ClientToServerSignifiers
     public const int AddToGameSessionQueue = 3;
     public const int TicTacToePlay = 4;
     public const int AddOberverToSession = 5;
+    public const int ReplayRequest = 6;
 }
 
 public static class ServerToClientSignifiers
@@ -408,6 +424,8 @@ public static class ServerToClientSignifiers
     public const int GameSessionStarted = 2;
     public const int OpponentTicTacToePlay = 3;
     public const int ObserverEntered = 4;
+    public const int ObserverCatchUp = 5;
+    public const int Replay = 6;
 }
 
 public static class LoginResponses

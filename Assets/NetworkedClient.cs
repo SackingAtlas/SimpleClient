@@ -137,8 +137,19 @@ public class NetworkedClient : MonoBehaviour
         }
         else if (signifier == ServerToClientSignifiers.ObserverEntered)
         {
-            //int OpponantMoveSignifier = int.Parse(csv[1]);
-            //gameSystemManager.GetComponent<GameSystemManager>().GetOpponentsPlay(OpponantMoveSignifier);
+            int playCount = int.Parse(csv[1]);
+            Debug.Log(playCount);
+           // gameSystemManager.GetComponent<GameSystemManager>().ObserverCatchUp(playCount);
+        }
+        else if (signifier == ServerToClientSignifiers.ObserverCatchUp)
+        {
+            int cellPlayed = int.Parse(csv[1]);
+            gameSystemManager.GetComponent<GameSystemManager>().ObserverCatchUp(cellPlayed);
+        }
+        else if (signifier == ServerToClientSignifiers.Replay)
+        {
+            int cellPlayed = int.Parse(csv[1]);
+            gameSystemManager.GetComponent<GameSystemManager>().ReplayGameMoves(cellPlayed);
         }
     }
 
