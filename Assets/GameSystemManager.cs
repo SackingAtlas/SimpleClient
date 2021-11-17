@@ -162,7 +162,7 @@ public class GameSystemManager : MonoBehaviour
     private void ReplayButtonnPressed()
     {
         networkedClient.GetComponent<NetworkedClient>().SendMessageToHost(ClientToServerSignifiers.ReplayRequest + ",");
-        currentPlayerMarker = "O";
+        currentPlayerMarker = "O"; 
         GameObject[] CellButtons = { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
         foreach (GameObject marker in CellButtons)
         {
